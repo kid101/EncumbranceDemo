@@ -1,0 +1,104 @@
+group 'net.corda.demo'
+version '1.0'
+buildscript {
+    ext.corda_release_version = '3.1-corda'
+    ext.corda_gradle_plugins_version = '3.1.0'
+    ext.quasar_version = '0.7.9'
+    ext.junit_version = '4.12'
+    ext.spring_boot_version = '2.0.2.RELEASE'
+    ext.corda_release_group = 'net.corda'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version")
+        classpath "net.corda.plugins:cordapp:$corda_gradle_plugins_version"
+        classpath "net.corda.plugins:cordformation:$corda_gradle_plugins_version"
+        classpath "net.corda.plugins:quasar-utils:$corda_gradle_plugins_version"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases' }
+    }
+    apply plugin: 'java'
+    sourceCompatibility = 1.8
+    apply plugin: 'net.corda.plugins.cordformation'
+    apply plugin: 'net.corda.plugins.quasar-utils'
+    apply plugin: 'net.corda.plugins.cordapp'
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << '-parameters'
+    }
+}
+
+dependencies {
+    cordapp project(":demo-node")
+    cordapp project(":demo-server")
+}
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.4.1' //we want gradle 4.4.1 to run this project
+}
+project.ext {
+    notary_Name="notary"
+    PartyA_rpcPort = 10003
+    PartyB_rpcPort = 10005
+    PartyC_rpcPort = 10008
+}
+
+task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
+    directory "./build/node"
+    node {
+        name "O=Notary,L=London,C=GB"
+        notary = [validating: true]
+        p2pPort 10002
+        rpcSettings {
+            address("localhost:10090")
+            adminAddress("localhost:10096")
+        }
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+    node {
+        name "O=PartyA,L=London,C=GB"
+        rpcSettings {
+            address("localhost:" + project["PartyA_rpcPort"])
+            adminAddress("localhost:10046")
+        }
+        p2pPort 10004
+        cordapps = ["net.corda.demo.node:demo-node:$version"]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+        extraConfig=[activeService:true] // This is how you put in any extra configuration related to node in the Node.Conf File.
+    }
+    node {
+        name "O=PartyB,L=New York,C=US"
+        rpcSettings {
+            address("localhost:" + project["PartyB_rpcPort"])
+            adminAddress("localhost:10049")
+        }
+        p2pPort 10006
+        cordapps = ["net.corda.demo.node:demo-node:$version"]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+    node {
+        name "O=PartyC,L=Liverpool,C=GB"
+        p2pPort 10007
+        rpcSettings {
+            address("localhost:"+project["PartyC_rpcPort"])
+            adminAddress("localhost:10054")
+        }
+        cordapps = ["net.corda.demo.node:demo-node:$version"]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+
+}
+

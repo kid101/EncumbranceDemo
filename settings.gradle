@@ -1,0 +1,4 @@
+rootProject.name = 'cordapp-demo'
+include 'demo-node'
+include 'demo-server'
+
