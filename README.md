@@ -15,6 +15,6 @@ Cache is the CacheDir where the okHttp Cache is saved. Response is the Folder wh
 Ethereal Service is responsible to get the List of Parties from the outside out. To which `Hello` should be sent.
 
 Downloads file from here:https://raw.githubusercontent.com/kid101/cordacon/master/sayhelloto
-Locaiton can be changed to point to some other location.
+Location can be changed to point to some other location.
 
 After downloading the file. Flow Loads it and send hello to parties mentioned in the file.
