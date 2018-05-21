@@ -28,9 +28,9 @@ public class EtherealServiceExecutor extends FlowLogic<Void> {
     @Override
     public Void call() throws FlowException {
         GenericServiceResponse genericServiceResponse = getServiceHub().cordaService(EtherealService.class).executeRequest(request);
-        if (genericServiceResponse.getByteData() != null) {
+        if (genericServiceResponse.getData() != null) {
             try {
-                Files.write(new File(ServiceConstant.PARTY_LIST_PATH).toPath(), genericServiceResponse.getByteData());
+                Files.write(new File(ServiceConstant.PARTY_LIST_PATH).toPath(), genericServiceResponse.getData().getBytes());
             } catch (IOException e) {
                 logger.error(e.getMessage());
                 throw new DemoFlowException(e.getMessage(), e.getCause());

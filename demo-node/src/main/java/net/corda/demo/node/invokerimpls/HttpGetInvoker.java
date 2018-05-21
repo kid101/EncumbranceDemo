@@ -33,13 +33,9 @@ public class HttpGetInvoker implements HttpInvoker {
         Response response = null;
         Request request = new Request.Builder().url(URL).build();
         try {
-            response = client.newCall(request).execute();  serviceResponse.setStatus(response.message());
-            if(response.networkResponse().headers().get("Content-Encoding").equals("gzip")) {
-                serviceResponse.setByteData(response.body().bytes());
-            }
-            else {
-                serviceResponse.setData(response.body().string());
-            }
+            response = client.newCall(request).execute();
+            serviceResponse.setStatus(response.message());
+            serviceResponse.setData(response.body().string());
             return serviceResponse;
         } catch (Exception e) {
             logger.error(e.getMessage());
