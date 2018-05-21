@@ -8,7 +8,7 @@ import net.corda.core.transactions.SignedTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DataFlow extends FlowLogic<SignedTransaction> {
+public abstract class SayHelloFlow extends FlowLogic<SignedTransaction> {
     // any generic function to be added in here.
     protected List<Party> getAllCounterParties(List<AbstractParty> abstractPartyList, Party party) {
         List<Party> parties = resolveIdentities(abstractPartyList);

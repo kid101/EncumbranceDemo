@@ -1,8 +1,8 @@
 package net.corda.demo.node.flow.responder;
 
 import co.paralleluniverse.fibers.Suspendable;
-import net.corda.demo.node.flow.DataFlow;
-import net.corda.demo.node.flow.initiator.DataFlowInitiator;
+import net.corda.demo.node.flow.SayHelloFlow;
+import net.corda.demo.node.flow.initiator.SayHelloFlowInitiator;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowSession;
 import net.corda.core.flows.InitiatedBy;
@@ -14,12 +14,12 @@ import org.slf4j.LoggerFactory;
 
 import static net.corda.core.contracts.ContractsDSL.requireThat;
 
-@InitiatedBy(DataFlowInitiator.class)
-public class DataFlowResponder extends DataFlow {
-    private static final Logger logger = LoggerFactory.getLogger(DataFlowResponder.class);
+@InitiatedBy(SayHelloFlowInitiator.class)
+public class SayHelloFlowResponder extends SayHelloFlow {
+    private static final Logger logger = LoggerFactory.getLogger(SayHelloFlowResponder.class);
     private FlowSession counterpartySession;
 
-    public DataFlowResponder(FlowSession counterpartySession) {
+    public SayHelloFlowResponder(FlowSession counterpartySession) {
         this.counterpartySession = counterpartySession;
     }
 

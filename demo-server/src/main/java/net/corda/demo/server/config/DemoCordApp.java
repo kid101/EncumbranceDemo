@@ -1,7 +1,6 @@
 package net.corda.demo.server.config;
 
 import net.corda.demo.server.service.ServiceScheduler;
-import net.corda.demo.server.service.impl.DataFlowService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,13 +22,10 @@ public class DemoCordApp {
     }*/
 
     @Bean
-    public DataFlowService dataFlowService() {
-        return new DataFlowService();
-    }
-
-    @Bean
     @ConditionalOnProperty(name = "active.service", havingValue = "true")
     public ServiceScheduler serviceScheduler() {
         return new ServiceScheduler();
     }
+
+
 }

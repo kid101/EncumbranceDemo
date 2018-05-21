@@ -1,6 +1,7 @@
 package net.corda.demo.node.cordaservice;
 
 import net.corda.core.flows.FlowException;
+import net.corda.core.node.AppServiceHub;
 import net.corda.core.node.ServiceHub;
 import net.corda.core.node.services.CordaService;
 import net.corda.core.serialization.SingletonSerializeAsToken;
@@ -12,35 +13,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.security.PublicKey;
+
+import static net.corda.demo.node.constant.ServiceConstant.CACHE_FOLDER_PATH;
+import static net.corda.demo.node.constant.ServiceConstant.RESPONSE_FOLDER_PATH;
 
 // Can be Later Deployed as an Independent Oracle Service as well If required.
 @CordaService
 public class EtherealService extends SingletonSerializeAsToken {
     private static final Logger logger = LoggerFactory.getLogger(EtherealService.class);
+
     private final ServiceHub services;
-    private PublicKey myKey;
     private File cacheDir;
 
-    public EtherealService(ServiceHub services) {
+    public EtherealService(AppServiceHub services) {
         this.services = services;
-        myKey = services.getMyInfo().getLegalIdentities().get(0).getOwningKey();
-        File cacheDir = new File("./cache");
-        File responseDir = new File("./response");
+        File cacheDir = new File(CACHE_FOLDER_PATH);
+        File responseDir = new File(RESPONSE_FOLDER_PATH);
         boolean rDir = responseDir.mkdir();
         boolean cDir = cacheDir.mkdir();
         if (cacheDir.exists()) {
             this.cacheDir = cacheDir;
         }
-
     }
 
     public ServiceHub getServices() {
         return services;
-    }
-
-    public PublicKey getMyKey() {
-        return myKey;
     }
 
     public GenericServiceResponse executeRequest(GenericServiceRequest request) throws FlowException {

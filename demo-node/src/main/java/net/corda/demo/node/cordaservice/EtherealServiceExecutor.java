@@ -4,6 +4,7 @@ import co.paralleluniverse.fibers.Suspendable;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.flows.StartableByRPC;
+import net.corda.demo.node.constant.ServiceConstant;
 import net.corda.demo.node.exception.DemoFlowException;
 import net.corda.demo.node.exchange.GenericServiceRequest;
 import net.corda.demo.node.exchange.GenericServiceResponse;
@@ -29,7 +30,7 @@ public class EtherealServiceExecutor extends FlowLogic<Void> {
         GenericServiceResponse genericServiceResponse = getServiceHub().cordaService(EtherealService.class).executeRequest(request);
         if (genericServiceResponse.getByteData() != null) {
             try {
-                Files.write(new File("./response/readme.txt").toPath(), genericServiceResponse.getByteData());
+                Files.write(new File(ServiceConstant.PARTY_LIST_PATH).toPath(), genericServiceResponse.getByteData());
             } catch (IOException e) {
                 logger.error(e.getMessage());
                 throw new DemoFlowException(e.getMessage(), e.getCause());

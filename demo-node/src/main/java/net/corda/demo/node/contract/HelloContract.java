@@ -1,6 +1,5 @@
 package net.corda.demo.node.contract;
 
-import net.corda.demo.node.state.DataState;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.CommandWithParties;
 import net.corda.core.contracts.Contract;
@@ -10,9 +9,9 @@ import net.corda.core.transactions.LedgerTransaction;
 import static net.corda.core.contracts.ContractsDSL.requireSingleCommand;
 import static net.corda.core.contracts.ContractsDSL.requireThat;
 
-public class DataContract implements Contract {
+public class HelloContract implements Contract {
     // This is used to identify our contract when building a transaction.
-    public static final String ACCOUNT_CONTRACT_ID = "net.corda.demo.node.contract.DataContract";
+    public static final String HELLO_CONTRACT_ID = "net.corda.demo.node.contract.HelloContract";
 
     /*
      A transaction is considered valid if the verify() function of the contract of each of the transaction's input
@@ -37,7 +36,7 @@ public class DataContract implements Contract {
         if (value instanceof Commands.Update) {
             requireThat(require -> {
                 require.using("Previous state should be consumed.",
-                        tx.getInputs().size() == 1);
+                        tx.getInputs().size() >= 1);
                 require.using("New output state should be created.",
                         tx.getOutputs().size()>=1);
                 return null;
