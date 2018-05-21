@@ -1,11 +1,15 @@
 # cordacon
 
-Step 1:
+Step 1: From the Project DIR
 
-Use **gradle deployNodes** to create the nodes. 
+do a **gradle deployNodes** to create the nodes. Navigate inside `./build/node/` and runserver
 
-Step 2:
-Do a **gradle createServer**.now execute **./build/node/runserver** to start the server
+Step 2: From the Project DIR
+Do a **gradle createServer**. to create the BootJar. execute`./build/node/runserver` to start the servers
 
-Only PartyA has privilege to run the service. so in build/node/PartyA/ you will find 2 foldes. Cache and Response:
-Cache is the CacheDir where the okHttp Cache is saved. Response is the Folder where the BitCoin Readme.txt file gets saved. 
+Only PartyA has privilege to run the service. so in build/node/PartyA/ you will find 2 folders. Cache and Response:
+Cache is the CacheDir where the okHttp Cache is saved. Response is the Folder where the partyList.txt file gets saved. 
+
+Ethereal Service is responsible to get the List of Parties from the outside out. To which `Hello` should be sent.
+
+After downloading the file. Flow Loads it and send hello to parties mentioned in the file.
