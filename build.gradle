@@ -101,4 +101,42 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     }
 
 }
-
+// This task can made more clean and generic or customized as per requirement, though conveys the idea of reading the node.conf file and it's custom properties
+task createServer(dependsOn: [':demo-server:bootJar']) {
+    doLast {
+        def starterFileWin = new File("./build/node/runserver.bat")
+        def starterFileLinux = new File("./build/node/runserver.sh") //Yet to be tested on Linux.
+        if (starterFileWin.exists() || starterFileLinux.exists()) {
+            starterFileWin.delete()
+            starterFileLinux.delete()
+        }
+        def rootBuildFolder = "./build/node/";
+        String regx = "[^A-Za-z0-9]"
+        int serverPort=8080 // initial server port
+        new File(rootBuildFolder).eachDir() { dir ->
+            if (!dir.getName().find(regx) && !dir.getName().equalsIgnoreCase("notary")) {
+                Config config = ConfigFactory.parseFile(new File(dir.getPath() + "/node.conf"));
+                def rpcAddress = config.getString("rpcSettings.address");
+                boolean activeService
+                if(config. hasPath("activeService")){
+                    activeService = config.getBoolean("activeService");
+                }
+                def rpcUsers = (HashMap) config.getAnyRefList("rpcUsers").get(0);
+                def password = rpcUsers.get("password")
+                def user = rpcUsers.get("user")
+                def winCMD = "start "
+                def terminal = "x-terminal-emulator -e"
+                def newLine =System.getProperty("line.separator")
+                String javaCommand = " java -Dnodename="+dir.getName()+
+                        " -Dconfig.rpc.password="+password+
+                        " -Dconfig.rpc.address="+rpcAddress+
+                        " -Dconfig.rpc.username="+user+
+                        " -Dserver.port="+(serverPort++)+
+                        " -Dactive.service="+activeService+
+                        " -jar " + project(':demo-server').jar.outputs.files.getSingleFile()
+                starterFileWin.append(winCMD+javaCommand+ newLine)
+                starterFileLinux.append(terminal+javaCommand+newLine)
+            }
+        }
+    }
+}
