@@ -7,8 +7,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.Runtime.getRuntime;
 
 public class NetworkUtil {
-    private NetworkUtil() {
-    }
+    private NetworkUtil() { }
 
     private static final Logger logger = LoggerFactory.getLogger(NetworkUtil.class);
 

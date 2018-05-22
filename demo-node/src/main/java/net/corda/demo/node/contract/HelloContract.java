@@ -10,13 +10,7 @@ import static net.corda.core.contracts.ContractsDSL.requireSingleCommand;
 import static net.corda.core.contracts.ContractsDSL.requireThat;
 
 public class HelloContract implements Contract {
-    // This is used to identify our contract when building a transaction.
     public static final String HELLO_CONTRACT_ID = "net.corda.demo.node.contract.HelloContract";
-
-    /*
-     A transaction is considered valid if the verify() function of the contract of each of the transaction's input
-     and output states does not throw an exception.
-     */
 
     @Override
     public void verify(LedgerTransaction tx) {
@@ -38,19 +32,14 @@ public class HelloContract implements Contract {
                 require.using("Previous state should be consumed.",
                         tx.getInputs().size() >= 1);
                 require.using("New output state should be created.",
-                        tx.getOutputs().size()>=1);
+                        tx.getOutputs().size() >= 1);
                 return null;
             });
         }
-
     }
 
     public interface Commands extends CommandData {
-        class Create extends TypeOnlyCommandData implements Commands {
-        }
-
-        class Update extends TypeOnlyCommandData implements Commands {
-        }
-
+        class Create extends TypeOnlyCommandData implements Commands { }
+        class Update extends TypeOnlyCommandData implements Commands { }
     }
 }

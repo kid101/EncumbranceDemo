@@ -34,6 +34,7 @@ public class GenericServiceResponse {
     public void setError(String error) {
         this.error = error;
     }
+
     @ConstructorForDeserialization
     public GenericServiceResponse(String status, String data, byte[] byteData, String error) {
         this.status = status;

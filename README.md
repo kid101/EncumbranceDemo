@@ -6,7 +6,7 @@ do a **gradle deployNodes** to create the nodes. Navigate inside `./build/node/`
 
 Step 2: From the Project DIR
 
-Do a **gradle createServer**. to create the BootJar in demo-server project. execute`./build/node/runserver` to start the servers
+Do a **gradle createServer** to create the BootJar in demo-server project. execute`./build/node/runserver` to start the servers
 
 Only PartyA has privilege to run the service (On Conditional Property Used. looks for `active.service`set to `true` in JVM args to Activate the Service). 
 In build/node/PartyA/ you will find 2 folders. Cache and Response:

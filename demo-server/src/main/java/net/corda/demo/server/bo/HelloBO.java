@@ -17,31 +17,16 @@ public class HelloBO {
         this.status = status;
     }
 
-    public HelloBO() {
-    }
-
     public String getSender() {
         return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
     }
 
     public List<String> getReceivers() {
         return receivers;
     }
 
-    public void setReceivers(List<String> receivers) {
-        this.receivers = receivers;
-    }
-
     public String getData() {
         return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
     }
 
     public String getHelloId() {
@@ -50,13 +35,5 @@ public class HelloBO {
 
     public String getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setHelloId(String helloId) {
-        this.helloId = helloId;
     }
 }
