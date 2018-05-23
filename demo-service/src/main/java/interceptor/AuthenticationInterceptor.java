@@ -1,13 +1,13 @@
-package net.corda.demo.node.interceptor;
+package interceptor;
 
-import net.corda.demo.node.constant.ServiceConstant;
-import net.corda.demo.node.util.NetworkUtil;
+import constant.ServiceConstant;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.NetworkUtil;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ public class AuthenticationInterceptor implements Interceptor {
         Request.Builder builder = chain.request().newBuilder();
         long t1 = System.nanoTime();
         builder.header(ServiceConstant.USER_AGENT, ServiceConstant.USER_AGENT_VALUE);
-        if(!NetworkUtil.checkIfConnectionExists()){
+        if (!NetworkUtil.checkIfConnectionExists()) {
             builder.cacheControl(CacheControl.FORCE_CACHE);
         }
         Response response = chain.proceed(builder.build());

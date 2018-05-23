@@ -1,8 +1,8 @@
-package net.corda.demo.node.invokerimpls;
+package invokerimpls;
 
+import interceptor.AuthenticationInterceptor;
+import invokers.HttpInvoker;
 import net.corda.demo.node.exchange.GenericServiceResponse;
-import net.corda.demo.node.interceptor.AuthenticationInterceptor;
-import net.corda.demo.node.invokers.HttpInvoker;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

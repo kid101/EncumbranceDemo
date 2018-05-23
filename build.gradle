@@ -48,6 +48,7 @@ allprojects {
 dependencies {
     cordapp project(":demo-node")
     cordapp project(":demo-server")
+    cordapp project(":demo-service")
 }
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1' //we want gradle 4.4.1 to run this project
@@ -78,9 +79,8 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             adminAddress("localhost:10046")
         }
         p2pPort 10004
-        cordapps = ["net.corda.demo.node:demo-node:$version"]
+        cordapps = ["net.corda.demo.node:demo-node:$version","net.corda.demo.service:demo-service:$version"]
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
-        extraConfig=[activeService:true] // This is how you put in any extra configuration related to node in the Node.Conf File.
     }
     node {
         name "O=PartyB,L=New York,C=US"
@@ -107,23 +107,19 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
 // This task can made more clean and generic or customized as per requirement, though conveys the idea of reading the node.conf file and it's custom properties
 task createServer(dependsOn: [':demo-server:bootJar']) {
     doLast {
-        def starterFileWin = new File("./build/node/runserver.bat")
-        def starterFileLinux = new File("./build/node/runserver.sh") //Yet to be tested on Linux.
+        def rootBuildFolder = "./build/node/";
+        def starterFileWin = new File(rootBuildFolder+"runserver.bat")
+        def starterFileLinux = new File(rootBuildFolder+"/runserver.sh")
         if (starterFileWin.exists() || starterFileLinux.exists()) {
             starterFileWin.delete()
             starterFileLinux.delete()
         }
-        def rootBuildFolder = "./build/node/";
         String regx = "[^A-Za-z0-9]"
         int serverPort=8080 // initial server port
         new File(rootBuildFolder).eachDir() { dir ->
             if (!dir.getName().find(regx) && !dir.getName().equalsIgnoreCase("notary")) {
                 Config config = ConfigFactory.parseFile(new File(dir.getPath() + "/node.conf"));
                 def rpcAddress = config.getString("rpcSettings.address");
-                boolean activeService
-                if(config. hasPath("activeService")){
-                    activeService = config.getBoolean("activeService");
-                }
                 def rpcUsers = (HashMap) config.getAnyRefList("rpcUsers").get(0);
                 def password = rpcUsers.get("password")
                 def user = rpcUsers.get("user")
@@ -135,7 +131,6 @@ task createServer(dependsOn: [':demo-server:bootJar']) {
                         " -Dconfig.rpc.address="+rpcAddress+
                         " -Dconfig.rpc.username="+user+
                         " -Dserver.port="+(serverPort++)+
-                        " -Dactive.service="+activeService+
                         " -jar " + project(':demo-server').jar.outputs.files.getSingleFile()
                 starterFileWin.append(winCMD+javaCommand+ newLine)
                 starterFileLinux.append(terminal+javaCommand+newLine)

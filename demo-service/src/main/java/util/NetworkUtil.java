@@ -1,13 +1,14 @@
-package net.corda.demo.node.util;
+package util;
 
-import net.corda.demo.node.constant.ServiceConstant;
+import constant.ServiceConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.Runtime.getRuntime;
 
 public class NetworkUtil {
-    private NetworkUtil() { }
+    private NetworkUtil() {
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(NetworkUtil.class);
 
@@ -22,8 +23,7 @@ public class NetworkUtil {
                 logger.info(String.format("Not Connected to Internet, Output received %d", x));
                 return false;
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             logger.warn(e.getMessage());
             return false;
         }

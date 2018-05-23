@@ -1,7 +1,8 @@
-package net.corda.demo.node.invokers;
+package invokers;
 
+
+import invokerimpls.HttpGetInvoker;
 import net.corda.demo.node.exception.DemoFlowException;
-import net.corda.demo.node.invokerimpls.HttpGetInvoker;
 
 import javax.ws.rs.HttpMethod;
 import java.io.File;

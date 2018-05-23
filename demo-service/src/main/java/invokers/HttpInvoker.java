@@ -1,4 +1,4 @@
-package net.corda.demo.node.invokers;
+package invokers;
 
 import net.corda.demo.node.exchange.GenericServiceResponse;
 
