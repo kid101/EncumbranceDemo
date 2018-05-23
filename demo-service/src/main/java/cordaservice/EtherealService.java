@@ -34,7 +34,7 @@ public final class EtherealService extends SingletonSerializeAsToken {
         this.timer = new Timer();
         this.appServiceHub = appServiceHub;
         File cacheDir = new File(CACHE_FOLDER_PATH);
-        if (cacheDir.exists()) {
+        if (cacheDir.mkdir() || cacheDir.exists()) {
             this.cacheDir = cacheDir;
         }
         timer.schedule(new PeriodicTask(), 0);
