@@ -104,15 +104,32 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     }
 
 }
+
+enum OS {
+    MAC,
+    WIN,
+    LINUX
+}
+
+def OS getOSName() {
+    def osName = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
+    if (osName.contains("mac") || osName.contains("darwin")) {
+        return OS.MAC;
+    } else if (osName.contains("win")) {
+        return OS.WIN;
+    } else return OS.LINUX;
+}
+
 // This task can made more clean and generic or customized as per requirement, though conveys the idea of reading the node.conf file and it's custom properties
 task createServer(dependsOn: [':demo-server:bootJar']) {
     doLast {
+        OS os = getOSName();
         def rootBuildFolder = "./build/node/";
-        def starterFileWin = new File(rootBuildFolder+"runserver.bat")
-        def starterFileLinux = new File(rootBuildFolder+"/runserver.sh")
-        if (starterFileWin.exists() || starterFileLinux.exists()) {
-            starterFileWin.delete()
-            starterFileLinux.delete()
+        def starterBatFile = new File(rootBuildFolder+"runserver.bat")
+        def starterShFile = new File(rootBuildFolder+"/runserver.sh")
+        if (starterBatFile.exists() || starterShFile.exists()) {
+            starterBatFile.delete()
+            starterShFile.delete()
         }
         String regx = "[^A-Za-z0-9]"
         int serverPort=8080 // initial server port
@@ -124,7 +141,9 @@ task createServer(dependsOn: [':demo-server:bootJar']) {
                 def password = rpcUsers.get("password")
                 def user = rpcUsers.get("user")
                 def winCMD = "start "
-                def terminal = "x-terminal-emulator -e"
+                def linux = "x-terminal-emulator -e"
+                def macStart = "osascript -e 'tell app \"Terminal\" to do script \""
+                def macEnd="\"'"
                 def newLine =System.getProperty("line.separator")
                 String javaCommand = " java -Dnodename="+dir.getName()+
                         " -Dconfig.rpc.password="+password+
@@ -132,8 +151,11 @@ task createServer(dependsOn: [':demo-server:bootJar']) {
                         " -Dconfig.rpc.username="+user+
                         " -Dserver.port="+(serverPort++)+
                         " -jar " + project(':demo-server').jar.outputs.files.getSingleFile()
-                starterFileWin.append(winCMD+javaCommand+ newLine)
-                starterFileLinux.append(terminal+javaCommand+newLine)
+                starterBatFile.append(winCMD+javaCommand+ newLine)
+                if (os == OS.LINUX)
+                    starterShFile.append(linux + javaCommand + newLine)
+                else
+                    starterShFile.append(macStart + javaCommand +macEnd+ newLine)
             }
         }
     }
