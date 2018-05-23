@@ -9,14 +9,15 @@ import java.util.List;
 
 public class ControllerHelper {
     public static HelloBO convertStateToBO(HelloState helloState, Vault.StateStatus stateTypes) {
-        HelloBO helloBO = new HelloBO();
-        helloBO.setData(helloState.getData());
-        helloBO.setHelloId(helloState.getHelloId().toString());
         List<String> receivers=new ArrayList<>();
-        helloState.getReceivers().stream().forEach(e->receivers.add(e.toString()));
-        helloBO.setReceivers(receivers);
-        helloBO.setSender(helloState.getSender().toString());
-        helloBO.setStatus(stateTypes.toString());
-        return helloBO;
+        helloState.getReceivers().forEach(e -> receivers.add(e.toString()));
+
+        return new HelloBO(
+                helloState.getSender().toString(),
+                receivers,
+                helloState.getData(),
+                helloState.getHelloId().toString(),
+                stateTypes.toString()
+        );
     }
 }

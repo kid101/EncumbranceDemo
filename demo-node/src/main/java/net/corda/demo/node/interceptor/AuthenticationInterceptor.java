@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-//Can be used to add any Authentication Headers later on.
+// Can be used to add any Authentication Headers later on.
 public class AuthenticationInterceptor implements Interceptor {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationInterceptor.class);
 

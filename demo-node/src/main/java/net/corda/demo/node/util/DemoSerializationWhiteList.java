@@ -16,8 +16,7 @@ public class DemoSerializationWhiteList implements SerializationWhitelist {
     @Override
     public List<Class<?>> getWhitelist() {
         return ImmutableList.of(HashSet.class, Date.class, java.util.Date.class,
-                Instant.class, TimeWindow.class, Double.class,HttpMethod.class
-
+                Instant.class, TimeWindow.class, Double.class, HttpMethod.class
         );
     }
 }

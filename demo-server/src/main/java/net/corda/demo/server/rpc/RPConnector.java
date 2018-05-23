@@ -22,14 +22,16 @@ public class RPConnector {
 
     @PostConstruct
     private void init() {
-        System.out.println("RPConnector [host=" + rpcAddress + ", username=" + username + ", password=" + password
-                + "]");
+        System.out.println(
+                String.format("RPConnector [host=%s, username=%s, password=%s]", rpcAddress, username, password)
+        );
+
         NetworkHostAndPort hostAndPort = NetworkHostAndPort.parse(rpcAddress);
         CordaRPCClient rpcClient = new CordaRPCClient(hostAndPort);
         CordaRPCConnection rpcConnection = rpcClient.start(username, password);
         rpcOps = rpcConnection.getProxy();
+
         System.out.println("connected to via RPC");
-        rpcOps.networkMapSnapshot();
     }
 
     public CordaRPCOps getRPCops() {
