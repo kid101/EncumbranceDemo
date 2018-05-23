@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@StartableByService
+@StartableByRPC
 @InitiatingFlow
 public class SayHelloFlow extends FlowLogic<SignedTransaction> {
     private static final Logger logger = LoggerFactory.getLogger(SayHelloFlow.class);

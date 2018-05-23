@@ -18,3 +18,7 @@ Downloads file from here:https://raw.githubusercontent.com/kid101/cordacon/maste
 Location can be changed to point to some other location.
 
 After downloading the file. Flow Loads it and send hello to parties mentioned in the file.
+
+API `demo/sayHelloTo` to send hello to the parties mentioned in the partyList.txt
+
+API `demo/getAllHello/{pageNumber}` to view all the hello's.

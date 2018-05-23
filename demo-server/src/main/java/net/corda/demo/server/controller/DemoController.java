@@ -3,10 +3,14 @@ package net.corda.demo.server.controller;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.corda.core.identity.CordaX500Name;
+import net.corda.core.messaging.FlowHandle;
 import net.corda.core.node.NodeInfo;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.node.services.vault.QueryCriteria;
+import net.corda.core.transactions.SignedTransaction;
+import net.corda.demo.node.contract.HelloContract;
+import net.corda.demo.node.flow.SayHelloFlow;
 import net.corda.demo.node.state.HelloState;
 import net.corda.demo.server.bo.HelloBO;
 import net.corda.demo.server.constant.ServerConstant;
@@ -15,6 +19,7 @@ import net.corda.demo.server.rpc.RPConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,4 +77,22 @@ public class DemoController {
             return ResponseEntity.noContent().build();
     }
 
+    // now read the response from the file and say hello to appropriate parties
+    @GetMapping("/sayHelloTo")
+    public ResponseEntity sayHelloTo() {
+        FlowHandle<SignedTransaction> signedTransactionFlowHandle = connector.getRPCops().startFlowDynamic(SayHelloFlow.class, new HelloContract.Commands.Create());
+        try {
+            SignedTransaction signedTransaction = signedTransactionFlowHandle.getReturnValue().get();
+            if (signedTransaction != null) {
+                logger.info("Hello Sent with secureHash: " + signedTransaction.getId());
+                return ResponseEntity.ok(signedTransaction.getId());
+            } else {
+                logger.info("No available Counter Party found! from list");
+                return ResponseEntity.noContent().build();
+            }
+        } catch (Exception e) {
+            logger.error("error saying hello!: " + e.getMessage());
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
