@@ -8,7 +8,7 @@ Step 2: From the Project DIR
 
 Do a **gradle createServer** to create the BootJar in demo-server project. execute`./build/node/runserver` to start the servers
 
-Only PartyA has privilege to run the service (On Conditional Property Used. looks for `active.service`set to `true` in JVM args to Activate the Service). 
+Only PartyA has privilege to run the service. demo-service cordapp is deployed on PartyA only.
 In build/node/PartyA/ you will find 2 folders. Cache and Response:
 Cache is the CacheDir where the okHttp Cache is saved. Response is the Folder where the partyList.txt file gets saved. 
 
