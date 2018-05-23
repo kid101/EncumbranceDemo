@@ -63,6 +63,7 @@ public final class EtherealService extends SingletonSerializeAsToken {
                     throw new DemoFlowException(e.getMessage(), e.getCause());
                 }
             }
+            timer.schedule(new PeriodicTask(), 10 * 60 * 1000); // Delay of 10 mins
         }
     }
 }

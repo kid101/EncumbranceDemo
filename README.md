@@ -1,4 +1,9 @@
 # cordacon
+This CordApp caches a file using a `Corda Service` which contains the list of names of parties to which some data needs to be sent. 
+In our case the data is just a simple hello
+
+The Flow then loads the cached file sends data or 'Hello' in our case to parties mentioned in the file.
+
 
 Step 1: From the Project DIR
 
