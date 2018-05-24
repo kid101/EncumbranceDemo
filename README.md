@@ -19,9 +19,11 @@ Navigate inside `./build/node/` and `runnodes` to start the node
 
 **Step 4**: Start the WebServer
 
-Navigate inside `./build/node/` and `runwebserver` to start the servers
+Navigate inside `./build/node/` and `runserver` to start the servers
 
-Related Info:
+**Related Info**
+
+PartyA is listening on localhost:8080, PartyB is listenting on localhost:8081, and PartyC is listening on localhost:8082.
 
 Only PartyA has privilege to run the service. demo-service cordapp is deployed on PartyA only.
 In build/node/PartyA/ you will find 2 folders. Cache and Response:
@@ -34,10 +36,13 @@ Location can be changed to point to some other location.
 
 After downloading the file. Flow Loads it and sends hello to parties mentioned in the file.
 
-API `demo/sayHelloTo` to send hello to the parties mentioned in the partyList.txt
+**API**
 
-API `demo/getAllHello/{pageNumber}` to view all the hello's.
+* `demo/hello` to test the server is working
+* `demo/me` to get the node's identity
+* `demo/sayHelloTo` to send hello to the parties mentioned in the partyList.txt
+* `demo/getAllHello/{pageNumber}` to view all the hello's
 
-common issues:
+**Common issues**
 
-if facing access issues to jar or file: `chmod` to give appropriate permissions.
+* If facing access issues to jar or file: `chmod` to give appropriate permissions
