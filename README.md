@@ -43,6 +43,6 @@ After downloading the file. Flow Loads it and sends hello to parties mentioned i
 * `demo/sayHelloTo` to send hello to the parties mentioned in the partyList.txt
 * `demo/getAllHello/{pageNumber}` to view all the hello's
 
-**Common issues**
+**Common Issues**:
 
-* If facing access issues to jar or file: `chmod` to give appropriate permissions
+If facing access issues to jar or shell script or log file: `chmod` to give appropriate permissions.
