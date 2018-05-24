@@ -21,7 +21,7 @@ Navigate inside `./build/node/` and `runnodes` to start the node
 
 Navigate inside `./build/node/` and `runwebserver` to start the servers
 
-Related Info:
+**Related Info**:
 
 Only PartyA has privilege to run the service. demo-service cordapp is deployed on PartyA only.
 In build/node/PartyA/ you will find 2 folders. Cache and Response:
@@ -38,6 +38,6 @@ API `demo/sayHelloTo` to send hello to the parties mentioned in the partyList.tx
 
 API `demo/getAllHello/{pageNumber}` to view all the hello's.
 
-common issues:
+**Common Issues**:
 
-if facing access issues to jar or file: `chmod` to give appropriate permissions.
+If facing access issues to jar or shell script or log file: `chmod` to give appropriate permissions.
