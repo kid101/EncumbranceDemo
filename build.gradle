@@ -126,7 +126,7 @@ task createServer(dependsOn: [':demo-server:bootJar']) {
         OS os = getOSName();
         def rootBuildFolder = "./build/node/";
         def starterBatFile = new File(rootBuildFolder + "runserver.bat")
-        def starterShFile = new File(rootBuildFolder + "/runserver.sh")
+        def starterShFile = new File(rootBuildFolder + "runserver.sh")
         if (starterBatFile.exists() || starterShFile.exists()) {
             starterBatFile.delete()
             starterShFile.delete()
