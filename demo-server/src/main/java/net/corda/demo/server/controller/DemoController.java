@@ -2,10 +2,12 @@ package net.corda.demo.server.controller;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.corda.client.rpc.RPCException;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.FlowHandle;
 import net.corda.core.node.NodeInfo;
 import net.corda.core.node.services.Vault;
+import net.corda.core.node.services.VaultQueryException;
 import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
@@ -66,15 +68,20 @@ public class DemoController {
         List<HelloBO> states = new ArrayList<>();
         QueryCriteria linearCriteria = new QueryCriteria.LinearStateQueryCriteria(null, null, null, Vault.StateStatus.ALL);
         PageSpecification pageSpecification = new PageSpecification(pageNumber, DEFAULT_PAGE_SIZE);
-        Vault.Page<HelloState> requestStates = connector.getRPCops().vaultQueryByWithPagingSpec(HelloState.class, linearCriteria, pageSpecification);
-        for (int i = 0; i < requestStates.getStates().size(); i++) {
-            logger.info(requestStates.getStates().get(i).getState().getData().toString());
-            states.add(ControllerHelper.convertStateToBO(requestStates.getStates().get(i).getState().getData(), requestStates.getStatesMetadata().get(i).getStatus()));
+        try {
+            Vault.Page<HelloState> requestStates = connector.getRPCops().vaultQueryByWithPagingSpec(HelloState.class, linearCriteria, pageSpecification);
+            for (int i = 0; i < requestStates.getStates().size(); i++) {
+                logger.info(requestStates.getStates().get(i).getState().getData().toString());
+                states.add(ControllerHelper.convertStateToBO(requestStates.getStates().get(i).getState().getData(), requestStates.getStatesMetadata().get(i).getStatus()));
+            }
+            if (states.size() > 0)
+                return ResponseEntity.ok(states);
+            else
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please specify a page number above 0.");
+        } catch (RPCException e) {
+            logger.error("Error saying hello!: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        if (states.size() > 0)
-            return ResponseEntity.ok(states);
-        else
-            return ResponseEntity.noContent().build();
     }
 
     // now read the response from the file and say hello to appropriate parties
@@ -88,11 +95,11 @@ public class DemoController {
                 return ResponseEntity.ok(signedTransaction.getId());
             } else {
                 logger.info("No available Counter Party found! from list");
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No available Counter Party found! from list");
             }
         } catch (Exception e) {
-            logger.error("error saying hello!: " + e.getMessage());
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            logger.error("Error saying hello!: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
