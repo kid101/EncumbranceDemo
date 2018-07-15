@@ -1,6 +1,3 @@
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
-
 group 'net.corda.demo'
 version '1.0'
 buildscript {
@@ -8,7 +5,6 @@ buildscript {
     ext.corda_gradle_plugins_version = '3.1.0'
     ext.quasar_version = '0.7.9'
     ext.junit_version = '4.12'
-    ext.spring_boot_version = '2.0.2.RELEASE'
     ext.corda_release_group = 'net.corda'
 
     repositories {
@@ -19,7 +15,6 @@ buildscript {
         maven { url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases' }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version")
         classpath "net.corda.plugins:cordapp:$corda_gradle_plugins_version"
         classpath "net.corda.plugins:cordformation:$corda_gradle_plugins_version"
         classpath "net.corda.plugins:quasar-utils:$corda_gradle_plugins_version"
@@ -46,18 +41,19 @@ allprojects {
 }
 
 dependencies {
-    cordapp project(":demo-node")
-    cordapp project(":demo-server")
-    cordapp project(":demo-service")
+    cordapp project(":encumbrance-state-contract")
+    cordapp project(":encumbrance-bakery")
+    cordapp project(":encumbrance-common")
+    cordapp project(":encumbrance-buyer")
 }
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1' //we want gradle 4.4.1 to run this project
 }
 project.ext {
     notary_Name = "notary"
-    PartyA_rpcPort = 10003
-    PartyB_rpcPort = 10005
-    PartyC_rpcPort = 10008
+    Bakery_rpcPort = 10003
+    BuyerA_rpcPort = 10005
+    BuyerB_rpcPort= 10008
 }
 
 task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
@@ -70,98 +66,44 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             address("localhost:10090")
             adminAddress("localhost:10096")
         }
+        cordapps = ["net.corda.demo.sc:encumbrance-state-contract:$version"]
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=PartyA,L=London,C=GB"
+        name "O=Bakery,L=London,C=GB"
         rpcSettings {
-            address("localhost:" + project["PartyA_rpcPort"])
+            address("localhost:" + project["Bakery_rpcPort"])
             adminAddress("localhost:10046")
         }
         p2pPort 10004
-        cordapps = ["net.corda.demo.node:demo-node:$version", "net.corda.demo.service:demo-service:$version"]
+        cordapps = ["net.corda.demo.bakery:encumbrance-bakery:$version",
+                    "net.corda.demo.common:encumbrance-common:$version",
+                    "net.corda.demo.sc:encumbrance-state-contract:$version"]
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=PartyB,L=New York,C=US"
+        name "O=BuyerA,L=New York,C=US"
         rpcSettings {
-            address("localhost:" + project["PartyB_rpcPort"])
+            address("localhost:" + project["BuyerA_rpcPort"])
             adminAddress("localhost:10049")
         }
         p2pPort 10006
-        cordapps = ["net.corda.demo.node:demo-node:$version"]
+        cordapps = ["net.corda.demo.buyer:encumbrance-buyer:$version",
+                    "net.corda.demo.common:encumbrance-common:$version",
+                    "net.corda.demo.sc:encumbrance-state-contract:$version"]
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=PartyC,L=Liverpool,C=GB"
+        name "O=BuyerB,L=Liverpool,C=GB"
         p2pPort 10007
         rpcSettings {
-            address("localhost:" + project["PartyC_rpcPort"])
+            address("localhost:" + project["BuyerB_rpcPort"])
             adminAddress("localhost:10054")
         }
-        cordapps = ["net.corda.demo.node:demo-node:$version"]
+        cordapps = ["net.corda.demo.buyer:encumbrance-buyer:$version",
+                    "net.corda.demo.common:encumbrance-common:$version",
+                    "net.corda.demo.sc:encumbrance-state-contract:$version"]
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
 
-}
-
-enum OS {
-    MAC,
-    WIN,
-    LINUX
-}
-
-def OS getOSName() {
-    def osName = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
-    if (osName.contains("mac") || osName.contains("darwin")) {
-        return OS.MAC;
-    } else if (osName.contains("win")) {
-        return OS.WIN;
-    } else return OS.LINUX;
-}
-
-// This task can made more clean and generic or customized as per requirement, though conveys the idea of reading the node.conf file and it's custom properties
-task createServer(dependsOn: [':demo-server:bootJar']) {
-    doLast {
-        OS os = getOSName();
-        def rootBuildFolder = "./build/node/";
-        def starterBatFile = new File(rootBuildFolder + "runserver.bat")
-        def starterShFile = new File(rootBuildFolder + "runserver.sh")
-        if (starterBatFile.exists() || starterShFile.exists()) {
-            starterBatFile.delete()
-            starterShFile.delete()
-        }
-        String regx = "[^A-Za-z0-9]"
-        int serverPort = 8080 // initial server port
-        new File(rootBuildFolder).eachDir() { dir ->
-            if (!dir.getName().find(regx) && !dir.getName().equalsIgnoreCase("notary")) {
-                Config config = ConfigFactory.parseFile(new File(dir.getPath() + "/node.conf"));
-                def rpcAddress = config.getString("rpcSettings.address");
-                def rpcUsers = (HashMap) config.getAnyRefList("rpcUsers").get(0);
-                def password = rpcUsers.get("password")
-                def user = rpcUsers.get("user")
-                def winCMD = "start "
-                def linux = "x-terminal-emulator -e"
-                def macStart = "osascript -e 'tell app \"Terminal\" to do script \""
-                def macEnd = "\"'"
-                def newLine = System.getProperty("line.separator")
-                String javaCommand = " java -Dnodename=" + dir.getName() +
-                        " -Dconfig.rpc.password=" + password +
-                        " -Dconfig.rpc.address=" + rpcAddress +
-                        " -Dconfig.rpc.username=" + user +
-                        " -Dserver.port=" + (serverPort++) +
-                        " -jar " + project(':demo-server').jar.outputs.files.getSingleFile()
-                if (os == OS.WIN){
-                    starterBatFile.append(winCMD + javaCommand + newLine)
-                    return;
-                }
-                if (os == OS.MAC) {
-                    starterShFile.append(macStart + javaCommand + macEnd + newLine)
-                    return ;
-                }
-                if(os == OS.LINUX)
-                    starterShFile.append(linux + javaCommand + newLine)
-            }
-        }
-    }
 }

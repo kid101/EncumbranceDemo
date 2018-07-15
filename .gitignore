@@ -28,7 +28,6 @@ gradle-app.setting
 
 # Log file
 *.log
-cordapp-demo.iml
 # BlueJ files
 *.ctxt
 
@@ -59,8 +58,11 @@ hs_err_pid*
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-demo-node/build/
-demo-server/build/
+encumbrance-demo/build/
+encumbrance-bakery/build/
+encumbrance-common/build/
+encumbrance-state-contract/build/
+encumbrance-buyer/build/
 # Package Files #
 *.jar
 *.war

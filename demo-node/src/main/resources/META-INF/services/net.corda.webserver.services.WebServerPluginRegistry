@@ -1,2 +1,0 @@
-# Register a ServiceLoader service extending from net.corda.node.CordaPluginRegistry
-#full class name of a plugin to be used if using a corda-webserver. Not needed as we are using boot.

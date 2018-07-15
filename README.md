@@ -1,48 +1,54 @@
-# cordacon
-This CordApp caches a file using a `Corda Service` which contains the list of names of parties to which some data needs to be sent. 
-In our case the data is just a simple hello
+# Corda Bakery [Encumbrance]
+This CordApp demonstrate the use encumbrance with a fun example of a Bakery.
 
-The Flow then loads the cached file sends data or 'Hello' in our case to parties mentioned in the file.
+In our Bakery, cake of various flavours `[vanilla, chocolate, orange, pineapple, strawberry]` and produced and sold with an Expiry associated with it. 
+
+The Bakery can only sell a cake if the Cake has not expired! and a Buyer can only Consume a cake if it's not Expired. 
+
+_**Encumbrance:**_
+`The encumbrance state, if present, forces additional controls over the encumbered state, since the platform checks
+that the encumbrance state is present as an input in the same transaction that consumes the encumbered state, and
+the contract code and rules of the encumbrance state will also be verified during the execution of the transaction.`
+
+**CordApp Info:** In this cordApp, encumbered state is the `Cake` and encumbrance is the `Expiry`. 
+This `Expiry` provides more control over the encumbered state i.e. `Cake` with an additional time-lock. 
+In this cordApp Expiry is `Covenant` i.e. it travels alongside each iteration of the encumbered state- Expiry will follow Cake where ever it goes. 
+
+We've 2 Types of Node in this CordApp:
+**Bakery**,**Buyer** 
+
+***Flows:*** The below mentioned flows can be used via shell to create, sell and consume cake.
+
+Go to Bakery Node, Create Cake of your choice. provide a flavour, an Id to the Cake and the Expiry of the Cake.
+The encumbered state i.e. `Cake` refers to its encumbrance i.e. `Expiry `by index, and the referred encumbrance state i.e. `Expiry` is an output state in a particular position on the same transaction that created the encumbered state i.e. `Cake`.
+In our case the position is `1` 
 
 
-**Step 1**: From the Project DIR
+**Create Cake**
+`flow start CreateCake flavour: "vanilla", cakeId: "1", expireAfterMinutes: 2`
 
-do a **gradle deployNodes** to create the nodes.
 
-**Step 2**: From the Project DIR
+Once the cake has been created, it can be sold to buyers by providing the cakeId, a buyer, to which the cake has to be sold
+and a boolean showEncumbrance to demonstrate what would happen if the `Cake` is Consumed without it's `Expiry`. It'll throw a `missing encumbrance exception.`
+This can be done by passing `showEncumbrance` as `true`
+also, if by any chance the cake has expired, the validation will fail and cake will not be sold.
+ 
+**Sell Cake**
+`flow start SellCakeInitiator cakeId: "1", buyer: "BuyerA", showEncumbrance: false`
 
-Do a **gradle createServer** to create the BootJar in demo-server project. 
+Go to `BuyerA` or `BuyerB` Node to consume the cake.
+The scrumptious cake created by our Corda Bakery can now be consumed by the buyer.
+The buyer has to provide the cakeId which it wants to consume along with boolean `showEncumbrance` to demonstrate 
+absence of encumbrance. In case, the Cake has expired the Buyer will not be able to consume the cake. 
 
-**Step 3**: Start the Nodes
+**Consume Cake**
+flow start ConsumeCake cakeId: "1", showEncumbrance: false
 
-Navigate inside `./build/node/` and `runnodes` to start the node
+***Vault Queries***: The below queries can be used to get the `Cake` and `Expiry` from the vault.
 
-**Step 4**: Start the WebServer
+**Get All Cakes**
+`run vaultQuery contractStateType: net.corda.demo.sc.state.Cake`
 
-Navigate inside `./build/node/` and `runserver` to start the servers
+**Get All Expiry**
+`run vaultQuery contractStateType: net.corda.demo.sc.state.Expiry`
 
-**Related Info**
-
-PartyA is listening on localhost:8080, PartyB is listenting on localhost:8081, and PartyC is listening on localhost:8082.
-
-Only PartyA has privilege to run the service. demo-service cordapp is deployed on PartyA only.
-In build/node/PartyA/ you will find 2 folders. Cache and Response:
-Cache is the CacheDir where the okHttp Cache is saved. Response is the Folder where the partyList.txt file gets saved. 
-
-Ethereal Service is responsible to get the List of Parties from the outside out. To which `Hello` should be sent.
-
-Downloads file from link: https://raw.githubusercontent.com/kid101/cordacon/master/sayhelloto
-Location can be changed to point to some other location.
-
-After downloading the file. Flow Loads it and sends hello to parties mentioned in the file.
-
-**API**
-
-* `demo/hello` to test the server is working
-* `demo/me` to get the node's identity
-* `demo/sayHelloTo` to send hello to the parties mentioned in the partyList.txt
-* `demo/getAllHello/{pageNumber}` to view all the hello's
-
-**Common Issues**:
-
-If facing access issues to jar or shell script or log file: `chmod` to give appropriate permissions.
