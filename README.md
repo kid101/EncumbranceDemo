@@ -30,11 +30,11 @@ In our case the position is `1`
 
 Once the cake has been created, it can be sold to buyers by providing the cakeId, a buyer, to which the cake has to be sold
 and a boolean includeEncumbrance to demonstrate what would happen if the `Cake` is Consumed without it's `Expiry`. It'll throw a `missing encumbrance exception.`
-This can be done by passing `includeEncumbrance` as `true`
+This can be done by passing `includeEncumbrance` as `false`
 also, if by any chance the cake has expired, the validation will fail and cake will not be sold.
  
 **Sell Cake**
-`flow start SellCakeInitiator cakeId: "1", buyer: "BuyerA", includeEncumbrance: false`
+`flow start SellCakeInitiator cakeId: "1", buyer: "BuyerA", includeEncumbrance: true`
 
 Go to `BuyerA` or `BuyerB` Node to consume the cake.
 The scrumptious cake created by our Corda Bakery can now be consumed by the buyer.
