@@ -1,6 +1,5 @@
 package net.corda.demo.sc.contract;
 
-import net.corda.core.CordaRuntimeException;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
 import net.corda.core.contracts.TypeOnlyCommandData;
@@ -17,12 +16,12 @@ public class ExpiryContract implements Contract {
     @Override
     public void verify(LedgerTransaction tx) {
         Expiry expiry;
-        if(tx.getCommands().stream().anyMatch(e->e.getValue() instanceof CakeContract.Commands.Consume))
-            expiry = tx.inputsOfType(Expiry.class).stream().findAny().orElseThrow(() -> new CordaRuntimeException("No Expiry Found to consume cake!"));
+        if (tx.getCommands().stream().anyMatch(e -> e.getValue() instanceof CakeContract.Commands.Consume))
+            expiry = tx.inputsOfType(Expiry.class).stream().findAny().get();
         else
-            expiry = tx.outputsOfType(Expiry.class).stream().findAny().orElseThrow(() -> new CordaRuntimeException("No Expiry Found!"));
+            expiry = tx.outputsOfType(Expiry.class).stream().findAny().get();
         if (Instant.now().isAfter(expiry.getExpiry())) {
-            throw new CordaRuntimeException("Expiry has passed!, Expiry date & time  was: " + LocalDateTime.ofInstant(expiry.getExpiry(), ZoneId.systemDefault()));
+            throw new IllegalArgumentException("Expiry has passed!, Expiry date & time  was: " + LocalDateTime.ofInstant(expiry.getExpiry(), ZoneId.systemDefault()));
         }
     }
 

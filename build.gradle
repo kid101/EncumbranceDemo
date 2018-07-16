@@ -50,7 +50,6 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1' //we want gradle 4.4.1 to run this project
 }
 project.ext {
-    notary_Name = "notary"
     Bakery_rpcPort = 10003
     BuyerA_rpcPort = 10005
     BuyerB_rpcPort= 10008

@@ -54,4 +54,22 @@ public class Cake implements OwnableState {
     public String getCakeId() {
         return cakeId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cake cake = (Cake) o;
+
+        if (flavour != cake.flavour) return false;
+        return cakeId != null ? cakeId.equals(cake.cakeId) : cake.cakeId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = flavour != null ? flavour.hashCode() : 0;
+        result = 31 * result + (cakeId != null ? cakeId.hashCode() : 0);
+        return result;
+    }
 }

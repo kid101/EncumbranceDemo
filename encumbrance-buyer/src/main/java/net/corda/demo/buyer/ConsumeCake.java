@@ -2,7 +2,10 @@ package net.corda.demo.buyer;
 
 import co.paralleluniverse.fibers.Suspendable;
 import net.corda.core.contracts.StateAndRef;
-import net.corda.core.flows.*;
+import net.corda.core.flows.FinalityFlow;
+import net.corda.core.flows.FlowException;
+import net.corda.core.flows.FlowLogic;
+import net.corda.core.flows.StartableByRPC;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
@@ -39,11 +42,10 @@ public class ConsumeCake extends FlowLogic<SignedTransaction> {
             FINALISING_TRANSACTION
     );
     private String cakeId;
-    private boolean showEncumbrance;
+    private boolean includeEncumbrance;
 
-    public ConsumeCake(String cakeId, boolean showEncumbrance) {
+    public ConsumeCake(String cakeId) {
         this.cakeId = cakeId;
-        this.showEncumbrance = showEncumbrance;
     }
 
     @Override
@@ -61,9 +63,7 @@ public class ConsumeCake extends FlowLogic<SignedTransaction> {
             StateAndRef<Expiry> expiryOfCake = FlowHelper.getExpiryOfCake(cakeId, getServiceHub());
             TransactionBuilder txBuilder = new TransactionBuilder(notary);
             txBuilder.addInputState(cake);
-            if (!showEncumbrance) {
-                txBuilder.addInputState(expiryOfCake);
-            }
+            txBuilder.addInputState(expiryOfCake);
             txBuilder.addCommand(new CakeContract.Commands.Consume(), cake.getState().getData().getParticipants().stream().map(AbstractParty::getOwningKey).collect(Collectors.toList()));
             progressTracker.setCurrentStep(VERIFYING_TRANSACTION);
             txBuilder.verify(getServiceHub());

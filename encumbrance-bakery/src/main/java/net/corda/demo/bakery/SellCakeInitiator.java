@@ -47,12 +47,12 @@ public class SellCakeInitiator extends SellCake {
     );
     private String cakeId;
     private String buyer;
-    private boolean showEncumbrance;
+    private boolean includeEncumbrance;
 
-    public SellCakeInitiator(String cakeId, String buyer, boolean showEncumbrance) {
+    public SellCakeInitiator(String cakeId, String buyer, boolean includeEncumbrance) {
         this.cakeId = cakeId;
         this.buyer = buyer;
-        this.showEncumbrance = showEncumbrance;
+        this.includeEncumbrance = includeEncumbrance;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SellCakeInitiator extends SellCake {
             CommandAndState expiryStateCommand = expiryOfCake.getState().getData().withNewOwner(buyerParty);
             TransactionBuilder txBuilder = new TransactionBuilder(notary);
             txBuilder.addInputState(cake);
-            if (!showEncumbrance) {
+            if (!includeEncumbrance) {
                 txBuilder.addInputState(expiryOfCake);
             }
             txBuilder.addOutputState(commandAndState.getOwnableState(), CakeContract.CAKE_CONTRACT_ID, notary, 1);

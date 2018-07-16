@@ -56,4 +56,22 @@ public class Expiry implements OwnableState {
     public CommandAndState withNewOwner(AbstractParty newOwner) {
         return new CommandAndState(new ExpiryContract.Commands.Pass(), new Expiry(this.expiry, cakeId, newOwner));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Expiry expiry1 = (Expiry) o;
+
+        if (expiry != null ? !expiry.equals(expiry1.expiry) : expiry1.expiry != null) return false;
+        return cakeId != null ? cakeId.equals(expiry1.cakeId) : expiry1.cakeId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = expiry != null ? expiry.hashCode() : 0;
+        result = 31 * result + (cakeId != null ? cakeId.hashCode() : 0);
+        return result;
+    }
 }
