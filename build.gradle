@@ -56,7 +56,7 @@ project.ext {
 }
 
 task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
-    directory "./build/node"
+    directory "./build/nodes"
     node {
         name "O=Notary,L=London,C=GB"
         notary = [validating: true]
