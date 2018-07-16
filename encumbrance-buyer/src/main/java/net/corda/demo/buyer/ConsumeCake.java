@@ -42,7 +42,7 @@ public class ConsumeCake extends FlowLogic<SignedTransaction> {
             FINALISING_TRANSACTION
     );
     private String cakeId;
-    private boolean includeEncumbrance;
+
 
     public ConsumeCake(String cakeId) {
         this.cakeId = cakeId;
