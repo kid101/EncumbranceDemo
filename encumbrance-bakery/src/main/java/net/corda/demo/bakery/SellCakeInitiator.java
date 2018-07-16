@@ -80,7 +80,7 @@ public class SellCakeInitiator extends SellCake {
             CommandAndState expiryStateCommand = expiryOfCake.getState().getData().withNewOwner(buyerParty);
             TransactionBuilder txBuilder = new TransactionBuilder(notary);
             txBuilder.addInputState(cake);
-            if (!includeEncumbrance) {
+            if (includeEncumbrance) {
                 txBuilder.addInputState(expiryOfCake);
             }
             txBuilder.addOutputState(commandAndState.getOwnableState(), CakeContract.CAKE_CONTRACT_ID, notary, 1);
