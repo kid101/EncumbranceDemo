@@ -41,7 +41,7 @@ The scrumptious cake created by our Corda Bakery can now be consumed by the buye
 The buyer has to provide the cakeId which it wants to consume. In case, the Cake has expired the Buyer will not be able to consume the cake. 
 
 **Consume Cake**
-flow start ConsumeCake cakeId: "1", includeEncumbrance: false
+`flow start ConsumeCake cakeId: "1"`
 
 ***Vault Queries***: The below queries can be used to get the `Cake` and `Expiry` from the vault.
 
