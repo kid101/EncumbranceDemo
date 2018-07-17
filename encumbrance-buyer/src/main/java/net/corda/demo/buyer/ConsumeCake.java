@@ -18,6 +18,8 @@ import net.corda.demo.sc.state.Expiry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 @StartableByRPC
@@ -65,6 +67,7 @@ public class ConsumeCake extends FlowLogic<SignedTransaction> {
             txBuilder.addInputState(cake);
             txBuilder.addInputState(expiryOfCake);
             txBuilder.addCommand(new CakeContract.Commands.Consume(), cake.getState().getData().getParticipants().stream().map(AbstractParty::getOwningKey).collect(Collectors.toList()));
+            txBuilder.setTimeWindow(Instant.now(), Duration.ofSeconds(1));
             progressTracker.setCurrentStep(VERIFYING_TRANSACTION);
             txBuilder.verify(getServiceHub());
             progressTracker.setCurrentStep(SIGNING_TRANSACTION);

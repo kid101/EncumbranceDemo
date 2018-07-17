@@ -15,6 +15,8 @@ import net.corda.demo.sc.contract.ExpiryContract;
 import net.corda.demo.sc.state.Cake;
 import net.corda.demo.sc.state.Expiry;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -87,6 +89,7 @@ public class SellCakeInitiator extends SellCake {
             txBuilder.addOutputState(expiryStateCommand.getOwnableState(), ExpiryContract.EXPIRY_CONTRACT_ID);
             txBuilder.addCommand(commandAndState.getCommand(), Arrays.asList(commandAndState.getOwnableState().getOwner().getOwningKey(), cake.getState().getData().getOwner().getOwningKey()));
             txBuilder.addCommand(expiryStateCommand.getCommand(), Arrays.asList(expiryStateCommand.getOwnableState().getOwner().getOwningKey(), expiryOfCake.getState().getData().getOwner().getOwningKey()));
+            txBuilder.setTimeWindow(Instant.now(), Duration.ofSeconds(1));
             progressTracker.setCurrentStep(VERIFYING_TRANSACTION);
             txBuilder.verify(getServiceHub());
             progressTracker.setCurrentStep(SIGNING_TRANSACTION);

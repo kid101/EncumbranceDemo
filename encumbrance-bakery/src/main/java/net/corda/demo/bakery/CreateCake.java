@@ -16,6 +16,7 @@ import net.corda.demo.sc.state.Flavour;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -70,7 +71,8 @@ public class CreateCake extends FlowLogic<SignedTransaction> {
                     .addOutputState(cake, CakeContract.CAKE_CONTRACT_ID, notary, 1)
                     .addOutputState(expiry, ExpiryContract.EXPIRY_CONTRACT_ID)
                     .addCommand(new CakeContract.Commands.Create(), cake.getOwner().getOwningKey())
-                    .addCommand(new ExpiryContract.Commands.Create(), expiry.getOwner().getOwningKey());
+                    .addCommand(new ExpiryContract.Commands.Create(), expiry.getOwner().getOwningKey())
+                    .setTimeWindow(Instant.now(), Duration.ofSeconds(1));
             progressTracker.setCurrentStep(VERIFYING_TRANSACTION);
             txBuilder.verify(getServiceHub());
             progressTracker.setCurrentStep(SIGNING_TRANSACTION);

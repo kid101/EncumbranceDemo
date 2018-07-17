@@ -2,6 +2,7 @@ package net.corda.demo.sc.contract;
 
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
+import net.corda.core.contracts.TimeWindow;
 import net.corda.core.contracts.TypeOnlyCommandData;
 import net.corda.core.transactions.LedgerTransaction;
 import net.corda.demo.sc.state.Expiry;
@@ -20,7 +21,11 @@ public class ExpiryContract implements Contract {
             expiry = tx.inputsOfType(Expiry.class).stream().findAny().get();
         else
             expiry = tx.outputsOfType(Expiry.class).stream().findAny().get();
-        if (Instant.now().isAfter(expiry.getExpiry())) {
+        TimeWindow timeWindow = tx.getTimeWindow();
+        if (timeWindow == null || timeWindow.getUntilTime() == null) {
+            throw new IllegalArgumentException("Cake transaction must have a timestamp with an until-time.");
+        }
+        if (timeWindow.getUntilTime().isAfter(expiry.getExpiry())) {
             throw new IllegalArgumentException("Expiry has passed!, Expiry date & time  was: " + LocalDateTime.ofInstant(expiry.getExpiry(), ZoneId.systemDefault()));
         }
     }
