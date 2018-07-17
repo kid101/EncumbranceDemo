@@ -8,14 +8,13 @@ import net.corda.demo.sc.contract.ExpiryContract;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Expiry implements OwnableState {
-
-    private Instant expiry;
-    private String cakeId;
-    private AbstractParty owner;
+    private final Instant expiry;
+    private final String cakeId;
+    private final AbstractParty owner;
 
     @ConstructorForDeserialization
     public Expiry(Instant expiry, String cakeId, AbstractParty owner) {
@@ -23,7 +22,6 @@ public class Expiry implements OwnableState {
         this.cakeId = cakeId;
         this.owner = owner;
     }
-
 
     public Expiry(Expiry other) {
         this.expiry = other.expiry;
@@ -34,7 +32,7 @@ public class Expiry implements OwnableState {
     @NotNull
     @Override
     public List<AbstractParty> getParticipants() {
-        return Arrays.asList(owner);
+        return Collections.singletonList(owner);
     }
 
     public Instant getExpiry() {

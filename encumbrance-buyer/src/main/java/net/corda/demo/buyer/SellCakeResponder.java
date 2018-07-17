@@ -13,8 +13,7 @@ import net.corda.demo.sc.state.Cake;
 
 @InitiatedBy(SellCake.class)
 public class SellCakeResponder extends SellCake{
-
-        private FlowSession counterpartySession;
+        private final FlowSession counterpartySession;
 
         public SellCakeResponder(FlowSession counterpartySession) {
             this.counterpartySession = counterpartySession;

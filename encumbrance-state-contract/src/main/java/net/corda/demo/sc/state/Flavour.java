@@ -13,7 +13,7 @@ public enum Flavour {
     PINEAPPLE("pineapple"),
     STRAWBERRY("strawberry");
 
-    private String name;
+    private final String name;
 
     Flavour(String name) {
         this.name = name;
@@ -28,7 +28,7 @@ public enum Flavour {
         if (StringUtil.isNullOrEmpty(name)) {
             return VANILLA;
         }
-        throw new IllegalArgumentException("unable to find equivalent Flavour, try only the following" + Arrays.toString(Flavour.values()));
+        throw new IllegalArgumentException("unable to find equivalent Flavour, try only the following " + Arrays.toString(Flavour.values()));
     }
 
     public String getName() {
