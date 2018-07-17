@@ -8,13 +8,13 @@ import net.corda.demo.sc.contract.CakeContract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Cake implements OwnableState {
-
-    private Flavour flavour;
-    private AbstractParty owner;
-    private String cakeId;
+    private final Flavour flavour;
+    private final AbstractParty owner;
+    private final String cakeId;
 
     @ConstructorForDeserialization
     public Cake(Flavour flavour, AbstractParty owner, String cakeId) {
@@ -44,7 +44,7 @@ public class Cake implements OwnableState {
     @NotNull
     @Override
     public List<AbstractParty> getParticipants() {
-        return Arrays.asList(owner);
+        return Collections.singletonList(owner);
     }
 
     public Flavour getFlavour() {

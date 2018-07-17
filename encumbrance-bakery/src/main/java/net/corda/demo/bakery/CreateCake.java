@@ -41,16 +41,17 @@ public class CreateCake extends FlowLogic<SignedTransaction> {
             SIGNING_TRANSACTION,
             FINALISING_TRANSACTION
     );
-    private String flavour;
-    private String cakeId;
-    private long expiryAfterMinute;
+
+    private final String flavour;
+    private final String cakeId;
+    private final long expiryAfterMinutes;
 
     public CreateCake(String flavour, String cakeId, long expireAfterMinutes) {
         this.flavour = flavour;
         this.cakeId = cakeId;
         if (expireAfterMinutes <= 0)
             throw new IllegalArgumentException("please provide positive value for expireAfterMinutes");
-        this.expiryAfterMinute = expireAfterMinutes;
+        this.expiryAfterMinutes = expireAfterMinutes;
     }
 
     @Override
@@ -62,21 +63,24 @@ public class CreateCake extends FlowLogic<SignedTransaction> {
     @Override
     public SignedTransaction call() throws FlowException {
         try {
+            progressTracker.setCurrentStep(GENERATING_TRANSACTION);
             Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0);
             FlowHelper.checkIfCakeExists(cakeId, getServiceHub());
-            progressTracker.setCurrentStep(GENERATING_TRANSACTION);
             Cake cake = new Cake(Flavour.fromText(flavour), getOurIdentity(), cakeId);
-            Expiry expiry = new Expiry(Instant.now().plus(expiryAfterMinute, ChronoUnit.MINUTES), cakeId, cake.getOwner());
+            Expiry expiry = new Expiry(Instant.now().plus(expiryAfterMinutes, ChronoUnit.MINUTES), cakeId, cake.getOwner());
             TransactionBuilder txBuilder = new TransactionBuilder(notary)
                     .addOutputState(cake, CakeContract.CAKE_CONTRACT_ID, notary, 1)
                     .addOutputState(expiry, ExpiryContract.EXPIRY_CONTRACT_ID)
                     .addCommand(new CakeContract.Commands.Create(), cake.getOwner().getOwningKey())
                     .addCommand(new ExpiryContract.Commands.Create(), expiry.getOwner().getOwningKey())
-                    .setTimeWindow(Instant.now(), Duration.ofSeconds(1));
+                    .setTimeWindow(Instant.now(), Duration.ofSeconds(10));
+
             progressTracker.setCurrentStep(VERIFYING_TRANSACTION);
             txBuilder.verify(getServiceHub());
+
             progressTracker.setCurrentStep(SIGNING_TRANSACTION);
             SignedTransaction signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
+
             progressTracker.setCurrentStep(FINALISING_TRANSACTION);
             return subFlow(new FinalityFlow(signedTransaction));
         } catch (Exception e) {
