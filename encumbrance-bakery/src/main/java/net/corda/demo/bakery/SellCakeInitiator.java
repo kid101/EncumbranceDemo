@@ -85,7 +85,7 @@ public class SellCakeInitiator extends SellCake {
             CommandAndState expiryStateCommand = expiryOfCake.getState().getData().withNewOwner(buyerParty);
             TransactionBuilder txBuilder = new TransactionBuilder(notary)
                     .addInputState(cake)
-                    .addOutputState(commandAndState.getOwnableState(), CakeContract.CAKE_CONTRACT_ID, notary, 1)
+                    .addOutputState(commandAndState.getOwnableState(), CakeContract.CAKE_CONTRACT_ID, notary, 1) // Encumbrance is at index 1 
                     .addOutputState(expiryStateCommand.getOwnableState(), ExpiryContract.EXPIRY_CONTRACT_ID)
                     .addCommand(commandAndState.getCommand(), Arrays.asList(commandAndState.getOwnableState().getOwner().getOwningKey(), cake.getState().getData().getOwner().getOwningKey()))
                     .addCommand(expiryStateCommand.getCommand(), Arrays.asList(expiryStateCommand.getOwnableState().getOwner().getOwningKey(), expiryOfCake.getState().getData().getOwner().getOwningKey()))
